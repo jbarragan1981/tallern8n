@@ -54,8 +54,45 @@ tallern8n/ (Raíz)
 │   │   └── styles.css        # Estilos Globales (Vanilla CSS)
 │   └── angular.json
 │
+
 └── docs/                     # Documentación del proyecto (Esquema DB, Estándares)
 ```
+
+## Posibilidad Futura: Migración a Repositorios Independientes (Multirepo)
+
+Como alternativa de escalabilidad a futuro, el monorepo puede dividirse en **repositorios independientes**. Esto permitiría equipos de desarrollo separados, versionados independientes y ciclos de CI/CD aislados.
+
+### Arquitectura en Multirepo
+
+```mermaid
+graph TD
+    subgraph Repo_Frontend ["Repositorio: urvaseo-frontend"]
+        FE["Angular SPA App"]
+    end
+
+    subgraph Repo_Backend ["Repositorio: urvaseo-backend"]
+        BE["Express API REST"]
+    end
+
+    subgraph Infra_Compartida ["Infraestructura y Persistencia"]
+        DB[(PostgreSQL)]
+        n8n[n8n Webhook / Gmail]
+    end
+
+    %% Relaciones e interacción
+    FE -- "Peticiones HTTP (REST + JWT)" --> BE
+    BE -- "Consultas SQL (TypeORM)" --> DB
+    BE -- "Recuperación de Clave (Axios)" --> n8n
+    
+    %% Deployments independientes
+    deploy_FE["CI/CD: Deploy a Hosting (Vercel/S3)"] -.-> FE
+    deploy_BE["CI/CD: Deploy a Server (Render/Docker)"] -.-> BE
+```
+
+### Impacto de la separación
+* **Independencia de Despliegue:** Cambios en el Frontend no requerirán validar o reconstruir el Backend, y viceversa.
+* **Seguridad y Accesos:** Control de accesos más granular en GitHub/GitLab para los desarrolladores.
+* **Configuración:** Se eliminarían los npm workspaces; cada repositorio tendría su propio `package.json`, archivo `.env` local e independiente, y configuración de calidad de código (SonarQube) ajustada a su stack.
 
 ## Stack Tecnológico
 
