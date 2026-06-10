@@ -6,8 +6,56 @@ Este es el repositorio del **Portal de Incidencias URVASEO**, una plataforma par
 
 El proyecto está configurado como un monorepo utilizando **npm workspaces**:
 
-- **`backend/`**: API REST construida con Node.js, TypeScript, Express, TypeORM y PostgreSQL.
-- **`frontend/`**: Cliente web spa desarrollado con Angular (utilizando componentes standalone, signals y control flow).
+```mermaid
+graph TD
+    root["tallern8n (Raíz)"] --> backend["backend/ (Express + TypeScript)"]
+    root --> frontend["frontend/ (Angular)"]
+    root --> docs["docs/ (Documentación)"]
+    
+    backend --> b_src["src/"]
+    b_src --> b_config["config/"]
+    b_src --> b_controllers["controllers/"]
+    b_src --> b_dtos["dtos/"]
+    b_src --> b_entities["entities/"]
+    b_src --> b_middlewares["middlewares/"]
+    b_src --> b_routes["routes/"]
+    b_src --> b_services["services/"]
+    
+    frontend --> f_src["src/"]
+    f_src --> f_app["app/"]
+    f_app --> f_components["components/"]
+    f_app --> f_core["core/"]
+    f_app --> f_pages["pages/"]
+    f_src --> f_env["environments/"]
+```
+
+### Distribución de Carpetas
+
+```text
+tallern8n/ (Raíz)
+├── backend/                  # API REST (Node.js + Express + TypeScript + TypeORM)
+│   ├── src/
+│   │   ├── config/           # Configuración (Base de Datos, JWT, etc.)
+│   │   ├── controllers/      # Controladores de la API
+│   │   ├── dtos/             # Data Transfer Objects (Validación)
+│   │   ├── entities/         # Entidades de TypeORM (Mapeo a DB)
+│   │   ├── middlewares/      # Middlewares (Autenticación, Roles)
+│   │   ├── routes/           # Definición de Rutas
+│   │   └── services/         # Lógica de Negocio (Servicios)
+│   └── tsconfig.json
+│
+├── frontend/                 # Aplicación SPA (Angular 17+)
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── components/   # Componentes Reutilizables (Navbar, etc.)
+│   │   │   ├── core/         # Servicios de Angular, Guards, Interceptors
+│   │   │   └── pages/        # Componentes de Páginas (Login, Dashboard, Chatbot)
+│   │   ├── environments/     # Configuración de entornos (API URL)
+│   │   └── styles.css        # Estilos Globales (Vanilla CSS)
+│   └── angular.json
+│
+└── docs/                     # Documentación del proyecto (Esquema DB, Estándares)
+```
 
 ## Stack Tecnológico
 
