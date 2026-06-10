@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const incidencia_controller_1 = require("../controllers/incidencia.controller");
+const auth_middleware_1 = require("../middlewares/auth.middleware");
+const validation_middleware_1 = require("../middlewares/validation.middleware");
+const incidencia_schema_1 = require("../dtos/incidencia.schema");
+const router = (0, express_1.Router)();
+const controller = new incidencia_controller_1.IncidenciaController();
+router.use(auth_middleware_1.authMiddleware);
+router.get('/stats', controller.getStats);
+router.get('/', controller.getAll);
+router.patch('/:id/estado', (0, validation_middleware_1.validateBody)(incidencia_schema_1.updateEstadoSchema), controller.updateEstado);
+exports.default = router;

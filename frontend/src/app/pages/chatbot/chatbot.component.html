@@ -1,0 +1,102 @@
+<div class="chatbot-page">
+  <div class="page-header">
+    <h2>Asistente Virtual IA</h2>
+    <p>Consulta información y reporta novedades interactuando con nuestra Inteligencia Artificial.</p>
+  </div>
+
+  <div class="glass chat-card">
+    <!-- Messages Area -->
+    <div class="chat-messages" #scrollContainer>
+      @for (msg of messages(); track $index) {
+        <div class="message-wrapper" [class.user-wrapper]="msg.sender === 'user'">
+          <div class="avatar" [class.user-avatar]="msg.sender === 'user'">
+            {{ msg.sender === 'user' ? 'U' : '🤖' }}
+          </div>
+          <div class="message-bubble" [class.user-bubble]="msg.sender === 'user'">
+            @if (msg.attachmentType) {
+              <div class="attachment-badge">
+                <span class="attachment-icon">
+                  @if (msg.attachmentType === 'imagen') { 🖼️ }
+                  @else if (msg.attachmentType === 'audio') { 🎵 }
+                  @else { 📄 }
+                </span>
+                <span class="attachment-name">{{ msg.fileName }}</span>
+              </div>
+            }
+            <div class="message-text">{{ msg.text }}</div>
+          </div>
+        </div>
+      }
+
+      @if (isBotTyping()) {
+        <div class="message-wrapper">
+          <div class="avatar">🤖</div>
+          <div class="message-bubble typing-bubble">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+        </div>
+      }
+
+      @if (errorMessage()) {
+        <div class="alert alert-danger chat-alert">
+          {{ errorMessage() }}
+        </div>
+      }
+    </div>
+
+    <!-- Input Footer -->
+    <div class="chat-footer">
+      <div class="attachment-buttons">
+        <button type="button" (click)="imageInput.click()" class="btn-attach" title="Adjuntar Imagen">
+          🖼️
+        </button>
+        <button type="button" (click)="toggleRecording()" class="btn-attach" [class.recording]="isRecording()" [title]="isRecording() ? 'Detener Grabación' : 'Grabar Mensaje de Voz'">
+          {{ isRecording() ? '🔴' : '🎤' }}
+        </button>
+        <button type="button" (click)="fileInput.click()" class="btn-attach" title="Adjuntar Documento">
+          📄
+        </button>
+
+        <!-- Hidden Inputs -->
+        <input 
+          #imageInput 
+          type="file" 
+          accept="image/*" 
+          style="display: none" 
+          (change)="onFileSelected($event, 'imagen')" 
+        />
+        <input 
+          #audioInput 
+          type="file" 
+          accept="audio/*" 
+          style="display: none" 
+          (change)="onFileSelected($event, 'audio')" 
+        />
+        <input 
+          #fileInput 
+          type="file" 
+          accept="*/*" 
+          style="display: none" 
+          (change)="onFileSelected($event, 'archivo')" 
+        />
+      </div>
+
+      <form (ngSubmit)="sendMessage()" class="chat-form">
+        <input 
+          type="text" 
+          name="inputText"
+          class="form-control chat-input" 
+          placeholder="Escribe un mensaje aquí..." 
+          [(ngModel)]="inputText"
+          [disabled]="isBotTyping()"
+          autocomplete="off"
+        />
+        <button type="submit" class="btn-primary btn-send" [disabled]="isBotTyping() || !inputText().trim()">
+          Enviar
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

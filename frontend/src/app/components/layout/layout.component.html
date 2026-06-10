@@ -1,0 +1,52 @@
+<div class="app-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="logo">U</div>
+      <span class="brand-name">URVASEO</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/app/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="icon">📊</span>
+        <span>Dashboard</span>
+      </a>
+      <a routerLink="/app/incidencias" routerLinkActive="active" class="nav-item">
+        <span class="icon">⚠️</span>
+        <span>Incidencias</span>
+      </a>
+      <a routerLink="/app/chatbot" routerLinkActive="active" class="nav-item">
+        <span class="icon">🤖</span>
+        <span>Asistente IA</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ authService.userNombre().charAt(0) }}</div>
+      <div class="user-info">
+        <div class="user-name">{{ authService.userNombre() }}</div>
+        <div class="user-role">{{ authService.userRol() }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+    <header class="topbar glass">
+      <div class="page-title">
+        Portal de Gestión Interna
+      </div>
+      <div class="topbar-actions">
+        <span class="user-email-tag">{{ authService.userEmail() }}</span>
+        <button (click)="onLogout()" class="btn-logout">
+          <span>Cerrar Sesión</span>
+          <span class="icon">🚪</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

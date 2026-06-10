@@ -1,0 +1,137 @@
+<div class="incidencias-page">
+  <div class="page-header">
+    <h2>Listado de Incidencias</h2>
+    <p>Revisa y actualiza el estado de las novedades operativas.</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      <p>Cargando incidencias...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+  } @else {
+    <div class="glass card-container">
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Título</th>
+              <th>Tipo</th>
+              <th>Proyecto</th>
+              <th>Severidad</th>
+              <th>Estado</th>
+              <th>Reportado Por</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (inc of incidencias(); track inc.id) {
+              <tr>
+                <td class="font-bold">#{{ inc.id }}</td>
+                <td>
+                  <div class="inc-title">{{ inc.titulo }}</div>
+                  <div class="inc-desc text-muted">{{ inc.descripcion || 'Sin descripción' }}</div>
+                </td>
+                <td>
+                  <span class="type-tag" [class]="'type-' + inc.tipo">
+                    {{ inc.tipo }}
+                  </span>
+                </td>
+                <td>{{ inc.proyecto?.nombre || 'Sin Proyecto' }}</td>
+                <td>
+                  <span class="badge" [class]="'badge-' + inc.severidad.toLowerCase()">
+                    {{ inc.severidad }}
+                  </span>
+                </td>
+                <td>
+                  <span class="status-dot" [class]="'status-' + inc.estado.replace('_', '-')"></span>
+                  <span class="status-text">{{ inc.estado.replace('_', ' ') }}</span>
+                </td>
+                <td>
+                  <div class="reporter-name">{{ inc.reportadoPor?.nombre || 'N/A' }}</div>
+                  <div class="reporter-email text-muted">{{ inc.reportadoPor?.email || '' }}</div>
+                </td>
+                <td>
+                  <button (click)="openChangeStatusModal(inc)" class="btn-action">
+                    Cambiar Estado
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="8" class="text-center text-muted">No se encontraron incidencias registradas.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Cambio de Estado -->
+  @if (selectedIncidencia(); as inc) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="glass modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Cambiar Estado - Incidencia #{{ inc.id }}</h3>
+          <button (click)="closeModal()" class="btn-close">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <p class="inc-context"><strong>Título:</strong> {{ inc.titulo }}</p>
+
+          @if (updateError()) {
+            <div class="alert alert-danger">
+              {{ updateError() }}
+            </div>
+          }
+
+          <form (ngSubmit)="onSubmitStatusChange()">
+            <div class="form-group">
+              <label class="form-label" for="newEstado">Nuevo Estado</label>
+              <select 
+                id="newEstado" 
+                name="newEstado" 
+                class="form-control"
+                [(ngModel)]="newEstado"
+              >
+                <option value="abierto">Abierto</option>
+                <option value="en_progreso">En Progreso</option>
+                <option value="resuelto">Resuelto</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="comentario">Comentario / Justificación</label>
+              <textarea 
+                id="comentario" 
+                name="comentario" 
+                class="form-control textarea" 
+                rows="4"
+                placeholder="Detalle el motivo del cambio de estado..."
+                [(ngModel)]="comentario"
+                required
+              ></textarea>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" (click)="closeModal()" class="btn-secondary">Cancelar</button>
+              <button type="submit" class="btn-primary" [disabled]="isUpdating()">
+                @if (isUpdating()) {
+                  <span class="spinner"></span> Guardando...
+                } @else {
+                  Guardar Cambios
+                }
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  }
+</div>

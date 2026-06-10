@@ -1,0 +1,117 @@
+<div class="dashboard-page">
+  <div class="page-header">
+    <h2>Resumen de Novedades</h2>
+    <p>Visualización en tiempo real del estado de las incidencias reportadas.</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="loading-state">
+      <span class="spinner"></span>
+      <p>Cargando datos del dashboard...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="alert alert-danger">
+      {{ errorMessage() }}
+    </div>
+  } @else if (stats()) {
+    <!-- Metric Cards Grid -->
+    <div class="metrics-grid">
+      <div class="glass metric-card">
+        <div class="metric-icon total-icon">📋</div>
+        <div class="metric-info">
+          <h3>Total Reportadas</h3>
+          <p class="metric-value">{{ stats()?.total }}</p>
+        </div>
+      </div>
+
+      <div class="glass metric-card">
+        <div class="metric-icon abiertas-icon">🔴</div>
+        <div class="metric-info">
+          <h3>Abiertas</h3>
+          <p class="metric-value">{{ abiertasCount() }}</p>
+        </div>
+      </div>
+
+      <div class="glass metric-card">
+        <div class="metric-icon progreso-icon">🟡</div>
+        <div class="metric-info">
+          <h3>En Progreso</h3>
+          <p class="metric-value">{{ progresoCount() }}</p>
+        </div>
+      </div>
+
+      <div class="glass metric-card">
+        <div class="metric-icon resueltas-icon">🟢</div>
+        <div class="metric-info">
+          <h3>Resueltas</h3>
+          <p class="metric-value">{{ resueltasCount() }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Data Tables Grid -->
+    <div class="tables-grid">
+      <!-- Severities Table -->
+      <div class="glass data-table-card">
+        <div class="card-header">
+          <h3>Incidencias por Severidad</h3>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Severidad</th>
+                <th class="text-right">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of stats()?.severidades; track item.severidad) {
+                <tr>
+                  <td>
+                    <span class="badge" [class]="'badge-' + item.severidad.toLowerCase()">
+                      {{ item.severidad }}
+                    </span>
+                  </td>
+                  <td class="text-right font-bold">{{ item.count }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="2" class="text-center text-muted">No hay datos de severidad</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Projects Table -->
+      <div class="glass data-table-card">
+        <div class="card-header">
+          <h3>Incidencias por Proyecto</h3>
+        </div>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Proyecto</th>
+                <th class="text-right">Cantidad</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of stats()?.proyectos; track item.proyecto) {
+                <tr>
+                  <td class="font-medium">{{ item.proyecto }}</td>
+                  <td class="text-right font-bold">{{ item.count }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="2" class="text-center text-muted">No hay datos por proyecto</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  }
+</div>
